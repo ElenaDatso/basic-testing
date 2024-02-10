@@ -1,6 +1,6 @@
 // Uncomment the code below and write your tests
-// import { readFileAsynchronously, doStuffByTimeout, doStuffByInterval } from '.';
-import { doStuffByTimeout } from '.';
+// import { readFileAsynchronously } from '.';
+import { doStuffByTimeout, doStuffByInterval } from '.';
 
 describe('doStuffByTimeout', () => {
   beforeEach(() => {
@@ -29,20 +29,27 @@ describe('doStuffByTimeout', () => {
 });
 
 describe('doStuffByInterval', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     jest.useFakeTimers();
+    jest.spyOn(global, 'setInterval');
   });
 
-  afterAll(() => {
+  afterEach(() => {
     jest.useRealTimers();
+    jest.clearAllMocks();
   });
+  const cb = jest.fn();
 
   test('should set interval with provided callback and timeout', () => {
-    // Write your test here
+    doStuffByInterval(cb, 500);
+    expect(setInterval).toBeCalledWith(expect.any(Function), 500);
   });
 
   test('should call callback multiple times after multiple intervals', () => {
-    // Write your test here
+    doStuffByInterval(cb, 50);
+    expect(cb).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(150);
+    expect(cb).toHaveBeenCalledTimes(3);
   });
 });
 
